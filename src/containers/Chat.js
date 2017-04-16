@@ -37,7 +37,6 @@ class Chat extends Component {
   }
 
   render() {
-    console.log('input', this.props.input);
     return (
       <div>
         <ChatInput

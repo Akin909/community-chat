@@ -3,6 +3,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import Chat from './containers/Chat';
 import rootReducer from './reducers/index';
+import Navbar from './components/navbar';
 
 import './App.css';
 
@@ -13,8 +14,8 @@ class App extends Component {
     return (
       <Provider store={store}>
         <div className="App">
+          <Navbar />
           Community Chat
-          <Chat />
         </div>
       </Provider>
     );
