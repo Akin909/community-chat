@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import { getLoginDetails } from '../actions/index';
-import { loginReducer } from '../reducers/loginReducer';
 
 class Login extends Component {
   static propTypes = {
@@ -40,22 +39,18 @@ class Login extends Component {
 
   handleLogin(event) {
     event.preventDefault();
-    if (this.state.submitted) {
+    if (this.props.login.submitted) {
       return;
     }
     const userDetails = {};
     userDetails.submitted = true;
     userDetails.username = this.refs.username.value;
     userDetails.password = this.refs.password.value;
-    this.setState({
-      submitted: true,
-    });
     this.props.getLoginDetails(userDetails);
   }
 
   render() {
-    console.log('submitted', this.state.submitted);
-    if (this.state.submitted) {
+    if (this.props.login.submitted) {
       return (
         <Redirect
           to={{
@@ -96,4 +91,10 @@ const mapDispatchToProps = dispatch => {
   return bindActionCreators({ getLoginDetails }, dispatch);
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = state => {
+  return {
+    login: state.login,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -44,7 +44,7 @@ class Chat extends Component {
           onChange={this.handleInput}
           onSubmit={this.handleSubmit}
         />
-        <ChatOutput value={this.props.input} />
+        <ChatOutput user={this.props.login} value={this.props.input} />
       </div>
     );
   }
@@ -53,6 +53,7 @@ class Chat extends Component {
 const mapStateToProps = state => {
   return {
     input: state.input,
+    login: state.login,
   };
 };
 
