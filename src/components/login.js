@@ -51,6 +51,7 @@ class Login extends Component {
 
   render() {
     if (this.state.submitted) {
+      console.log('context', this.context);
       return (
         <div>You have successfully registered in {this.state.username}</div>
       );
