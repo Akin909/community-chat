@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
 import Chat from '../containers/Chat';
-import App from '../App';
 import Login from './login';
 import styled from 'styled-components';
 
@@ -17,13 +16,26 @@ const StyledNavLink = styled(Link)`
   }
 `;
 
+const NavLinkList = styled.ul`
+  list-style-type: none;
+  display:flex;
+  justify-content: center
+  background: pink;
+  margin:0;
+`;
+const NavListItem = styled.li`
+  margin:1rem;
+`;
+
 const Navbar = () => (
   <Router>
     <div>
-      <ul>
-        <li><StyledNavLink to="/">Home</StyledNavLink></li>
-        <li><StyledNavLink to="/chat">Chat</StyledNavLink></li>
-      </ul>
+      <NavLinkList>
+        <NavListItem><StyledNavLink to="/">Home</StyledNavLink></NavListItem>
+        <NavListItem>
+          <StyledNavLink to="/chat">Chat</StyledNavLink>
+        </NavListItem>
+      </NavLinkList>
 
       <Route path="/chat" component={Chat} />
       <Route exact path="/" component={Login} />
