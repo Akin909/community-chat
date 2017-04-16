@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Redirect } from 'react-router-dom';
+import { getLoginDetails } from '../actions/index';
+import { loginReducer } from '../reducers/loginReducer';
 
 class Login extends Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    dispatch: PropTypes.func.isRequired,
+    // dispatch: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -24,13 +28,11 @@ class Login extends Component {
   }
 
   handleUsernameInput(event) {
-    console.log(event.target.value);
     this.setState({
       username: event.target.value,
     });
   }
   handlePasswordInput(event) {
-    console.log(event.target.value);
     this.setState({
       password: event.target.value,
     });
@@ -41,19 +43,25 @@ class Login extends Component {
     if (this.state.submitted) {
       return;
     }
+    const userDetails = {};
+    userDetails.submitted = true;
+    userDetails.username = this.refs.username.value;
+    userDetails.password = this.refs.password.value;
     this.setState({
       submitted: true,
-      username: this.state.username,
-      password: this.state.password,
     });
-    console.log('state', this.state);
+    this.props.getLoginDetails(userDetails);
   }
 
   render() {
+    console.log('submitted', this.state.submitted);
     if (this.state.submitted) {
-      console.log('context', this.context);
       return (
-        <div>You have successfully registered in {this.state.username}</div>
+        <Redirect
+          to={{
+            pathname: '/chat',
+          }}
+        />
       );
     }
     return (
@@ -62,6 +70,7 @@ class Login extends Component {
         <input
           type="text"
           name="username"
+          ref="username"
           placeholder="Please enter a user name"
           onChange={this.handleUsernameInput}
           value={this.state.username}
@@ -71,6 +80,7 @@ class Login extends Component {
         <input
           type="text"
           name="password"
+          ref="password"
           placeholder="Please enter a password"
           onChange={this.handlePasswordInput}
           value={this.state.password}
@@ -82,8 +92,8 @@ class Login extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {};
-}
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({ getLoginDetails }, dispatch);
+};
 
-export default connect(mapStateToProps)(Login);
+export default connect(null, mapDispatchToProps)(Login);
