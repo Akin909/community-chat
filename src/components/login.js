@@ -43,6 +43,7 @@ class Login extends Component {
       return;
     }
     const userDetails = {};
+    userDetails.fromMe = true;
     userDetails.submitted = true;
     userDetails.username = this.refs.username.value;
     userDetails.password = this.refs.password.value;

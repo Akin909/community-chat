@@ -26,7 +26,7 @@ const NavLinkList = styled.ul`
 const NavListItem = styled.li`
   margin:1rem;
 `;
-
+//TODO Make the chat route private and navigate there on login
 const Navbar = () => (
   <Router>
     <div>

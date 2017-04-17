@@ -8,6 +8,7 @@ export function loginReducer(state = {}, action) {
         submitted: action.payload.submitted,
         username: action.payload.username,
         password: action.payload.password,
+        fromMe: action.payload.fromMe,
       };
 
     default:
