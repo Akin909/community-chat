@@ -4,8 +4,6 @@ import { Provider } from 'react-redux';
 import rootReducer from './reducers/index';
 import Navbar from './components/navbar';
 
-import './App.css';
-
 const store = createStore(
   rootReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
@@ -17,7 +15,6 @@ class App extends Component {
       <Provider store={store}>
         <div className="App">
           <Navbar />
-          Community Chat
         </div>
       </Provider>
     );

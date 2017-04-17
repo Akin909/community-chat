@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-const V4 = require('uuid/v4');
+import V4 from 'uuid/v4';
 import styled from 'styled-components';
 
 const Username = styled.span`
@@ -7,9 +7,11 @@ color: ${props => (props.mine ? 'blue' : 'red')};
 font-size: 1.1rem;
 font-weight: 800;
 `;
+
 const Message = styled.span`
   font-size: 1.1rem;
 `;
+
 const MessagesList = styled.ul`
   list-style-type: none;
   display:flex;
@@ -18,10 +20,12 @@ const MessagesList = styled.ul`
   padding: 0;
 `;
 
+const MessageContainer = styled.div`
+  width: 100%;
+  height: 60%;
+`;
+
 class ChatOutput extends Component {
-  constructor(props) {
-    super(props);
-  }
   componentDidUpdate() {
     // There is a new message in the state, scroll to bottom of list
     const messagesList = document.querySelector('#messagesList');
@@ -40,7 +44,7 @@ class ChatOutput extends Component {
         </MessagesList>
       );
     });
-    return <div id="messagesList">{messages}</div>;
+    return <MessageContainer id="messagesList">{messages}</MessageContainer>;
   }
 }
 

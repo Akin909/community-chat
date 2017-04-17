@@ -9,7 +9,6 @@ const StyledNavLink = styled(Link)`
   color: tomato;
   text-decoration: none;
   display: block;
-  font-family: Helvetica, Arial, sans-serif;
 
   &:hover {
     text-decoration: underline
@@ -22,6 +21,7 @@ const NavLinkList = styled.ul`
   justify-content: center
   background: pink;
   margin:0;
+  font-family: Helvetica, Arial, sans-serif;
 `;
 const NavListItem = styled.li`
   margin:1rem;
@@ -31,6 +31,7 @@ const Navbar = () => (
   <Router>
     <div>
       <NavLinkList>
+        <NavListItem>Community Chat</NavListItem>
         <NavListItem><StyledNavLink to="/">Home</StyledNavLink></NavListItem>
         <NavListItem>
           <StyledNavLink to="/chat">Chat</StyledNavLink>
