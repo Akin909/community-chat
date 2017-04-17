@@ -4,7 +4,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
 import { getLoginDetails, updateUserList } from '../actions/index';
+import styled from 'styled-components';
 
+import Input from './../styled-components/input.js';
+import Form from './../styled-components/form.js';
+
+const Label = styled.label`
+  margin-top: 0.4rem;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+`;
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -57,9 +67,9 @@ class Login extends Component {
       );
     }
     return (
-      <form onSubmit={this.handleLogin}>
-        <label htmlFor="username">Username: </label>
-        <input
+      <Form onSubmit={this.handleLogin}>
+        <Label htmlFor="username">Username: </Label>
+        <Input
           type="text"
           name="username"
           ref="username"
@@ -68,8 +78,8 @@ class Login extends Component {
           value={this.state.username}
           required
         />
-        <label htmlFor="password">Password: </label>
-        <input
+        <Label htmlFor="password">Password: </Label>
+        <Input
           type="text"
           name="password"
           ref="password"
@@ -78,8 +88,8 @@ class Login extends Component {
           value={this.state.password}
           required
         />
-        <input type="submit" value="submit" />
-      </form>
+        <Input button type="submit" value="submit" />
+      </Form>
     );
   }
 }
