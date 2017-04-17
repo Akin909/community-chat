@@ -3,15 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
-import { getLoginDetails } from '../actions/index';
+import { getLoginDetails, updateUserList } from '../actions/index';
 
 class Login extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    // dispatch: PropTypes.func.isRequired,
-  };
-
   constructor(props) {
     super(props);
 
@@ -42,12 +36,14 @@ class Login extends Component {
     if (this.props.login.submitted) {
       return;
     }
-    const userDetails = {};
-    userDetails.fromMe = true;
-    userDetails.submitted = true;
-    userDetails.username = this.refs.username.value;
-    userDetails.password = this.refs.password.value;
+    const userDetails = {
+      fromMe: true,
+      submitted: true,
+      username: this.refs.username.value,
+      password: this.refs.password.value,
+    };
     this.props.getLoginDetails(userDetails);
+    this.props.updateUserList(userDetails);
   }
 
   render() {
@@ -88,8 +84,14 @@ class Login extends Component {
   }
 }
 
+Login.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  // dispatch: PropTypes.func.isRequired,
+};
+
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ getLoginDetails }, dispatch);
+  return bindActionCreators({ getLoginDetails, updateUserList }, dispatch);
 };
 
 const mapStateToProps = state => {

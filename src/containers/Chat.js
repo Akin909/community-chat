@@ -4,13 +4,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ChatInput from '../components/ChatInput';
 import ChatOutput from '../components/ChatOutput';
-import { handleChatSubmit, updateUserList } from '../actions/index';
-import io from 'socket.io-client';
+import { handleChatSubmit, updateUserList, removeUser } from '../actions/index';
 import uuid from 'uuid';
 
-//Socket is hard coded to my backend server on 4005
-//TODO need to have a variable here to keep these two connected
-const socket = io('http://localhost:4005');
+import { socket } from '../App';
 
 class Chat extends Component {
   constructor() {
@@ -21,6 +18,7 @@ class Chat extends Component {
     this._initialize = this._initialize.bind(this);
     this._userJoined = this._userJoined.bind(this);
     this._messageRecieve = this._messageRecieve.bind(this);
+    this._userLeft = this._userLeft.bind(this);
 
     this.state = {
       value: '',
@@ -31,19 +29,25 @@ class Chat extends Component {
     socket.on('user:join', this._userJoined);
     socket.on('init', this._initialize);
     socket.on('send:message', this._messageRecieve);
+    socket.on('user:left', this._userLeft);
   }
   // Socket response events
   _initialize(data) {
     this.props.updateUserList(data);
   }
 
-  _messageRecieve(data) {
-    console.log('message received front end', data);
-    this.props.handleChatSubmit(data.text);
+  _userLeft(data) {
+    // TODO keep track of user to update when right user has left
+    this.props.removeUser(data.name);
+  }
+
+  _messageRecieve(messageDetails) {
+    // console.log('message received front end', messageDetails);
+    this.props.handleChatSubmit(messageDetails);
   }
 
   _userJoined(data) {
-    console.log('props in user joined', this.props);
+    // console.log('props in user joined', this.props);
     this.props.updateUserList(data);
   }
 
@@ -55,8 +59,12 @@ class Chat extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    socket.emit('send:message', event.target.firstChild.value);
-    this.props.handleChatSubmit(event.target.firstChild.value);
+    const messageDetails = {
+      username: this.props.login.username || 'User',
+      body: event.target.firstChild.value,
+    };
+    socket.emit('send:message', messageDetails);
+    this.props.handleChatSubmit(messageDetails);
     this.setState({
       value: '',
     });
@@ -70,16 +78,16 @@ class Chat extends Component {
 
   showUsers(props) {
     return props.user.map(user => {
-      return <li key={uuid()}>{user.name}</li>;
+      return <li key={uuid()}>{user.username}</li>;
     });
   }
 
   render() {
-    const { user } = this.props;
+    const { login } = this.props;
     return (
       <div>
         <ul>User List: {this.showUsers(this.props)} </ul>
-        <ChatOutput user={this.props.login} value={this.props.input} />
+        <ChatOutput user={login} messageDetails={this.props.messageDetails} />
         <ChatInput
           value={this.state.value}
           onChange={this.handleInput}
@@ -92,14 +100,17 @@ class Chat extends Component {
 
 const mapStateToProps = state => {
   return {
-    input: state.input,
+    messageDetails: state.input,
     login: state.login,
     user: state.user,
   };
 };
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ handleChatSubmit, updateUserList }, dispatch);
+  return bindActionCreators(
+    { handleChatSubmit, updateUserList, removeUser },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

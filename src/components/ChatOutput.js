@@ -32,15 +32,15 @@ class ChatOutput extends Component {
     messagesList.scrollTop = messagesList.scrollHeight;
   }
   render() {
-    const { value, user } = this.props;
-    const messages = value.map(item => {
+    const { messageDetails, user } = this.props;
+    const messages = messageDetails.map(message => {
       return (
         <MessagesList key={V4()}>
           <Username mine={user.fromMe}>
-            {user.username ? user.username + ':' : 'User:'}
+            {message.username ? message.username + ':' : 'User:'}
           </Username>
           {' '}
-          <Message>{item}</Message>
+          <Message>{message.body}</Message>
         </MessagesList>
       );
     });
