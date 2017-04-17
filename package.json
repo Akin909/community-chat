@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "express": "^4.15.2",
+    "global": "^4.3.1",
     "prop-types": "^15.5.8",
     "react": "15.5.4",
     "react-dom": "15.5.4",
@@ -13,6 +14,7 @@
     "socket.io": "^1.7.3",
     "socketio": "^1.0.0",
     "styled-components": "^1.4.5",
+    "surge": "^0.19.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
