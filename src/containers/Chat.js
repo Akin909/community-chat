@@ -4,6 +4,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ChatInput from '../components/ChatInput';
 import ChatOutput from '../components/ChatOutput';
+import {
+  UserList,
+  ChatContainer,
+  AllMessages,
+} from '../styled-components/chat_components';
+
 import { handleChatSubmit, updateUserList, removeUser } from '../actions/index';
 import uuid from 'uuid';
 
@@ -85,15 +91,17 @@ class Chat extends Component {
   render() {
     const { login } = this.props;
     return (
-      <div>
-        <ul>User List: {this.showUsers(this.props)} </ul>
-        <ChatOutput user={login} messageDetails={this.props.messageDetails} />
+      <ChatContainer>
+        <AllMessages>
+          <UserList>User List: {this.showUsers(this.props)} </UserList>
+          <ChatOutput user={login} messageDetails={this.props.messageDetails} />
+        </AllMessages>
         <ChatInput
           value={this.state.value}
           onChange={this.handleInput}
           onSubmit={this.handleSubmit}
         />
-      </div>
+      </ChatContainer>
     );
   }
 }

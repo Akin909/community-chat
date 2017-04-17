@@ -35,15 +35,17 @@ body {
 `;
 
 const OuterContainer = styled.div`
-width: 100vw;
-height: 100vh;
-background: ${props => props.theme.background}
+  font-family: ${props => props.theme.font};
+  width: 100vw;
+  height: 100vh;
+  background: ${props => props.theme.background}
 `;
+
 const theme = {
-  main: 'palevioletred',
+  main: '#0D2C54',
   font: 'Helvetica, Arial, sans-serif',
-  background: '#FFE5ED',
-  color: '#990032',
+  background: 'whitesmoke',
+  color: '#0D2C54',
 };
 
 export class App extends Component {

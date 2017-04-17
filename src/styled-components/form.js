@@ -10,6 +10,7 @@ const Form = styled.form`
   border: ${props => props.theme.main};
   font-family: ${props => props.theme.font};
   font-size: 1.3rem;
+  width: 100%;
   `;
 
 export default Form;
