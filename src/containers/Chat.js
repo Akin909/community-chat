@@ -32,6 +32,7 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    // TODO need to load new users once this component mounts
     socket.on('user:join', this._userJoined);
     socket.on('init', this._initialize);
     socket.on('send:message', this._messageRecieve);
