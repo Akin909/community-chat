@@ -8,6 +8,7 @@ import styled from 'styled-components';
 
 import Input from './../styled-components/input.js';
 import Form from './../styled-components/form.js';
+import { socket } from '../App';
 
 const Label = styled.label`
   margin-top: 0.4rem;
@@ -27,6 +28,7 @@ class Login extends Component {
       username: '',
       password: '',
       submitted: false,
+      fromMe: false,
     };
   }
 
@@ -46,18 +48,20 @@ class Login extends Component {
     if (this.props.login.submitted) {
       return;
     }
-    const userDetails = {
+    this.setState({
       fromMe: true,
       submitted: true,
-      username: this.refs.username.value,
-      password: this.refs.password.value,
-    };
-    this.props.getLoginDetails(userDetails);
-    this.props.updateUserList(userDetails);
+    });
+
+    console.log('state', this.state);
+    socket.emit('user:login', this.state);
+    this.props.updateUserList(this.state);
   }
 
   render() {
-    if (this.props.login.submitted) {
+    const { users } = this.props;
+    console.log('users');
+    if (users.length > 0 && users[users.length - 1].submitted) {
       return (
         <Redirect
           to={{
@@ -72,7 +76,7 @@ class Login extends Component {
         <Input
           type="text"
           name="username"
-          ref="username"
+          id="username"
           placeholder="Please enter a user name"
           onChange={this.handleUsernameInput}
           value={this.state.username}
@@ -82,7 +86,7 @@ class Login extends Component {
         <Input
           type="text"
           name="password"
-          ref="password"
+          id="password"
           placeholder="Please enter a password"
           onChange={this.handlePasswordInput}
           value={this.state.password}
@@ -101,12 +105,12 @@ Login.propTypes = {
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ getLoginDetails, updateUserList }, dispatch);
+  return bindActionCreators({ updateUserList }, dispatch);
 };
 
 const mapStateToProps = state => {
   return {
-    login: state.login,
+    users: state.user,
   };
 };
 

@@ -23,10 +23,10 @@ export function removeUser(user) {
   };
 }
 
-export function getLoginDetails(details) {
-  socket.emit('user:login', details);
-  return {
-    type: LOGIN_DETAILS,
-    payload: details,
-  };
-}
+// export function getLoginDetails(details) {
+//   socket.emit('user:login', details);
+//   return {
+//     type: LOGIN_DETAILS,
+//     payload: details,
+//   };
+// }

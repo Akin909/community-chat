@@ -7,6 +7,7 @@ export function userReducer(state = [], action) {
       return [...state, action.payload];
 
     case REMOVE_USER:
+      console.log('user to be deleted, userReducer', action.payload);
       return state.filter(user => {
         return user.username !== action.payload;
       });
