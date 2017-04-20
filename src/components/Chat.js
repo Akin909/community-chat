@@ -16,9 +16,9 @@ class Chat extends Component {
     super();
 
     // this.welcomeUser = this.welcomeUser.bind(this);
+    // this._initialize = this._initialize.bind(this);
     this.handleChatSubmit = this.handleChatSubmit.bind(this);
     this.handleInput = this.handleInput.bind(this);
-    // this._initialize = this._initialize.bind(this);
     this._userJoined = this._userJoined.bind(this);
     this._messageRecieve = this._messageRecieve.bind(this);
     this._userLeft = this._userLeft.bind(this);
@@ -38,11 +38,11 @@ class Chat extends Component {
     socket.on('send:message', this._messageRecieve);
     socket.on('user:left', this._userLeft);
   }
-  // Socket response events
   // _initialize(data) {
   //   console.log('initialization', data);
   // }
 
+  // Socket response events
   _userLeft(data) {
     // TODO keep track of user to update when right user has left
     console.log(data.name);
