@@ -1,7 +1,7 @@
 import React from 'react';
 // import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
-import Chat from '../containers/Chat';
+import Chat from '../components/Chat';
 import Login from './login';
 import styled from 'styled-components';
 

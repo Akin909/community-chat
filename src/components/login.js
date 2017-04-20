@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
-import { getLoginDetails, updateUserList } from '../actions/index';
 import styled from 'styled-components';
 
 import Input from './../styled-components/input.js';
@@ -45,23 +42,16 @@ class Login extends Component {
 
   handleLogin(event) {
     event.preventDefault();
-    if (this.props.login.submitted) {
-      return;
-    }
     this.setState({
       fromMe: true,
       submitted: true,
     });
-
-    console.log('state', this.state);
+    // console.log('state in login', this.state);
     socket.emit('user:login', this.state);
-    this.props.updateUserList(this.state);
   }
 
   render() {
-    const { users } = this.props;
-    console.log('users');
-    if (users.length > 0 && users[users.length - 1].submitted) {
+    if (this.state.submitted) {
       return (
         <Redirect
           to={{
@@ -104,14 +94,4 @@ Login.propTypes = {
   // dispatch: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ updateUserList }, dispatch);
-};
-
-const mapStateToProps = state => {
-  return {
-    users: state.user,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
