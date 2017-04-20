@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import uuid from 'uuid/v4';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { socket } from '../App';
+
+import { addMessages } from './../actions/index';
+
 import ChatInput from '../components/ChatInput';
 import ChatOutput from '../components/ChatOutput';
 import {
@@ -32,11 +37,10 @@ class Chat extends Component {
 
   componentDidMount() {
     // TODO need to load new users once this component mounts
-    // socket.on('welcome user', this.welcomeUser);
     socket.on('user:join', this._userJoined);
     socket.on('init', this._initialize);
-    socket.on('send:message', this._messageRecieve);
     socket.on('user:left', this._userLeft);
+    socket.on('new:message', this._messageRecieve);
   }
   // _initialize(data) {
   //   console.log('initialization', data);
@@ -48,16 +52,8 @@ class Chat extends Component {
     console.log(data.name);
   }
 
-  _messageRecieve({ body, username }) {
-    this.setState({
-      messages: [
-        ...this.state.messages,
-        {
-          body,
-          username,
-        },
-      ],
-    });
+  _messageRecieve(message) {
+    this.props.addMessages(message);
   }
 
   _userJoined(data) {
@@ -76,14 +72,13 @@ class Chat extends Component {
     //TODO NEED TO FIGURE WHO THE CURRENT USER IS USING SOCKET.USERNAME??
     const currentMessage = {
       body: event.target.firstChild.value,
-      username: this.state.users[this.state.length - 1],
+      username: this.state.users[this.state.length - 1] || 'Guest1',
     };
     event.preventDefault();
-    this.setState({
-      messages: [...this.state.messages, currentMessage],
-      users: [...this.state.users, this.state.users || 'User'],
-    });
     socket.emit('send:message', currentMessage);
+    this.setState({
+      value: '',
+    });
   }
 
   handleInput(event) {
@@ -107,7 +102,7 @@ class Chat extends Component {
               return <li key={uuid()}>{user}</li>;
             })}
           </UserList>
-          <ChatOutput messages={this.state.messages} />
+          <ChatOutput messages={this.props.messages} />
         </AllMessages>
         <ChatInput
           value={this.state.value}
@@ -119,4 +114,14 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+const mapStateToProps = state => {
+  return {
+    messages: state.messages,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({ addMessages }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);

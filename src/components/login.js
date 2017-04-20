@@ -46,7 +46,6 @@ class Login extends Component {
       fromMe: true,
       submitted: true,
     });
-    // console.log('state in login', this.state);
     socket.emit('user:login', this.state);
   }
 
