@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  withRouter,
+  Redirect,
+  Link,
+  Route,
+} from 'react-router-dom';
 import Chat from '../components/Chat';
 import Login from './login';
 import styled from 'styled-components';
@@ -32,6 +38,83 @@ const NavListItem = styled.li`
   display: flex;
   flex-direction: row;
 `;
+const auth = {
+  isAuthenticated: false,
+  authenticate(callback) {
+    this.isAuthenticated = true;
+    setTimeout(callback, 100);
+  },
+  signout(callback) {
+    this.isAuthenticated = false;
+    setTimeout(callback, 100);
+  },
+};
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      (auth.isAuthenticated
+        ? <Component {...props} />
+        : <Redirect
+            to={{
+              pathname: '/auth',
+              state: { from: props.location },
+            }}
+          />)}
+  />
+);
+
+const AuthButton = withRouter(
+  ({ history }) =>
+    (auth.isAuthenticated
+      ? <p>
+          Welcome! <button
+            onClick={() => {
+              auth.signout(() => history.push('/'));
+            }}
+          >
+            {' '}Sign out{' '}
+          </button>
+        </p>
+      : <p>You are not logged in.</p>)
+);
+class Auth extends Component {
+  constructor() {
+    super();
+    this.state = {
+      redirectToReferrer: false,
+    };
+
+    this.login = this.login.bind(this);
+  }
+
+  login() {
+    auth.authenticate(() => {
+      this.setState({
+        redirectToReferrer: true,
+      });
+    });
+  }
+
+  render() {
+    console.log('from', this.props.location.state);
+    const { from } = this.props.location.state || { from: { pathname: '/' } };
+    const { redirectToReferrer } = this.state;
+
+    if (redirectToReferrer) {
+      <Redirect to={from} />;
+    }
+    return (
+      <div>
+        <p>
+          You must log in to view this page at {from.pathname}
+          <button onClick={this.login}>Log in</button>
+        </p>
+      </div>
+    );
+  }
+}
+
 //TODO Make the chat route private and navigate there on login
 const Navbar = () => (
   <Router>
@@ -43,9 +126,10 @@ const Navbar = () => (
           <StyledNavLink to="/chat">Chat</StyledNavLink>
         </NavListItem>
       </NavLinkList>
-
-      <Route path="/chat" component={Chat} />
+      <AuthButton />
       <Route exact path="/" component={Login} />
+      <Route path="/auth" component={Auth} />
+      <PrivateRoute path="/chat" component={Chat} />
     </div>
   </Router>
 );

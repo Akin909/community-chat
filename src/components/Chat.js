@@ -42,14 +42,16 @@ class Chat extends Component {
     socket.on('user:left', this._userLeft);
     socket.on('new:message', this._messageRecieve);
   }
-  // _initialize(data) {
-  //   console.log('initialization', data);
-  // }
+
+  _initialize(data) {
+    console.log('initialization', data);
+  }
 
   // Socket response events
   _userLeft(data) {
     // TODO keep track of user to update when right user has left
     console.log(data.name);
+    this.props.addMessages({ username: 'Admin', body: 'A User has departed' });
   }
 
   _messageRecieve(message) {
@@ -62,11 +64,6 @@ class Chat extends Component {
       users: [...this.state.users, data.username],
     });
   }
-
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-  };
 
   handleChatSubmit(event) {
     //TODO NEED TO FIGURE WHO THE CURRENT USER IS USING SOCKET.USERNAME??
@@ -114,6 +111,10 @@ class Chat extends Component {
   }
 }
 
+Chat.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+};
 const mapStateToProps = state => {
   return {
     messages: state.messages,
