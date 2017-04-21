@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Input from './../styled-components/input.js';
+import { auth } from './authentication';
 import Form from './../styled-components/form.js';
 import { socket } from '../App';
 
@@ -20,12 +21,14 @@ class Login extends Component {
     this.handleLogin = this.handleLogin.bind(this);
     this.handleUsernameInput = this.handleUsernameInput.bind(this);
     this.handlePasswordInput = this.handlePasswordInput.bind(this);
+    this.login = this.login.bind(this);
 
     this.state = {
       username: '',
       password: '',
       submitted: false,
       fromMe: false,
+      redirectToReferrer: false,
     };
   }
 
@@ -46,19 +49,35 @@ class Login extends Component {
       fromMe: true,
       submitted: true,
     });
-    socket.emit('user:login', this.state);
+    this.login(() => socket.emit('user:login', this.state));
+  }
+
+  login(callback) {
+    auth.authenticate(() => {
+      this.setState({
+        redirectToReferrer: true,
+      });
+      console.log('login was called');
+      callback();
+    });
   }
 
   render() {
-    if (this.state.submitted) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/chat',
-          }}
-        />
-      );
+    const { from } = this.props.location.state;
+    const { redirectToReferrer } = this.state;
+
+    if (redirectToReferrer) {
+      return <Redirect to={from} />;
     }
+    // if (this.state.submitted) {
+    //   return (
+    //     <Redirect
+    //       to={{
+    //         pathname: '/chat',
+    //       }}
+    //     />
+    //   );
+    // }
     return (
       <Form onSubmit={this.handleLogin}>
         <Label htmlFor="username">Username: </Label>
@@ -81,7 +100,12 @@ class Login extends Component {
           value={this.state.password}
           required
         />
-        <Input button type="submit" value="submit" />
+        <div>
+          <p>
+            You must login to join the chat
+            <Input button type="submit" value="Log in" />
+          </p>
+        </div>
       </Form>
     );
   }
