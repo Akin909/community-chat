@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 // import PropTypes from 'prop-types';
 import {
   BrowserRouter as Router,
@@ -71,7 +71,6 @@ const AuthButton = withRouter(
       : <p>You are not logged in.</p>)
 );
 
-//TODO Make the chat route private and navigate there on login
 const Navbar = () => (
   <Router>
     <div>

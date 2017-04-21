@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import { socket } from '../App';
 
-import { addMessages } from './../actions/index';
+import { addMessages, updateUsers } from './../actions/index';
 
 import ChatInput from '../components/ChatInput';
 import ChatOutput from '../components/ChatOutput';
@@ -20,13 +20,14 @@ class Chat extends Component {
   constructor() {
     super();
 
-    // this.welcomeUser = this.welcomeUser.bind(this);
     // this._initialize = this._initialize.bind(this);
     this.handleChatSubmit = this.handleChatSubmit.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this._userJoined = this._userJoined.bind(this);
     this._messageRecieve = this._messageRecieve.bind(this);
     this._userLeft = this._userLeft.bind(this);
+    this._switchRoom = this._switchRoom.bind(this);
+    this._updateRooms = this._updateRooms.bind(this);
 
     this.state = {
       messages: [],
@@ -37,10 +38,12 @@ class Chat extends Component {
 
   componentDidMount() {
     // TODO need to load new users once this component mounts
-    socket.on('user:join', this._userJoined);
+    socket.on('update:users', this._userJoined);
+    socket.on('update:users', this._updateUsers);
     socket.on('init', this._initialize);
     socket.on('user:left', this._userLeft);
     socket.on('new:message', this._messageRecieve);
+    socket.on('update:rooms', this._updateRooms);
   }
 
   _initialize(data) {
@@ -50,7 +53,6 @@ class Chat extends Component {
   // Socket response events
   _userLeft(data) {
     // TODO keep track of user to update when right user has left
-    console.log(data.name);
     this.props.addMessages({ username: 'Admin', body: 'A User has departed' });
   }
 
@@ -59,7 +61,7 @@ class Chat extends Component {
   }
 
   _userJoined(data) {
-    console.log('User joined: ', data);
+    this.props.updateUsers(data);
     this.setState({
       users: [...this.state.users, data.username],
     });
@@ -83,7 +85,26 @@ class Chat extends Component {
       value: event.target.value,
     });
   }
+  _switchRoom(room = 'gluttony') {
+    // console.log('switchrooms ran');
+    socket.emit('join:room', room);
+  }
 
+  _updateRooms(rooms, currentRoom) {
+    // console.log('_updateRooms ran', rooms, currentRoom);
+    return (
+      <div>
+        {rooms.map(
+          room =>
+            (room === currentRoom
+              ? <div key={uuid()}>{room}</div>
+              : <button key={uuid()} onClick={this._switchRoom(room)}>
+                  {room}
+                </button>)
+        )}
+      </div>
+    );
+  }
   showUsers(props) {
     return this.state.users.map(user => {
       return <li key={uuid()}>{user.username}</li>;
@@ -93,6 +114,7 @@ class Chat extends Component {
   render() {
     return (
       <ChatContainer>
+        <button onClick={this._switchRoom}>Join the general chat room</button>
         <AllMessages>
           <UserList>
             User List: {this.state.users.map(user => {
@@ -118,11 +140,12 @@ Chat.propTypes = {
 const mapStateToProps = state => {
   return {
     messages: state.messages,
+    users: state.users,
   };
 };
 
 const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ addMessages }, dispatch);
+  return bindActionCreators({ addMessages, updateUsers }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Chat);

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
-import styled from 'styled-components';
 
+import styled from 'styled-components';
 import Input from './../styled-components/input.js';
-import { auth } from './authentication';
 import Form from './../styled-components/form.js';
+import { auth } from './authentication';
 import { socket } from '../App';
 
 const Label = styled.label`
@@ -14,6 +14,14 @@ const Label = styled.label`
   height: 100%;
   text-align: center;
 `;
+
+const LoginMessage = styled.div`
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -57,7 +65,6 @@ class Login extends Component {
       this.setState({
         redirectToReferrer: true,
       });
-      console.log('login was called');
       callback();
     });
   }
@@ -69,15 +76,6 @@ class Login extends Component {
     if (redirectToReferrer) {
       return <Redirect to={from} />;
     }
-    // if (this.state.submitted) {
-    //   return (
-    //     <Redirect
-    //       to={{
-    //         pathname: '/chat',
-    //       }}
-    //     />
-    //   );
-    // }
     return (
       <Form onSubmit={this.handleLogin}>
         <Label htmlFor="username">Username: </Label>
@@ -100,12 +98,10 @@ class Login extends Component {
           value={this.state.password}
           required
         />
-        <div>
-          <p>
-            You must login to join the chat
-            <Input button type="submit" value="Log in" />
-          </p>
-        </div>
+        <LoginMessage>
+          You must login to join the chat
+          <Input button type="submit" value="Log in" />
+        </LoginMessage>
       </Form>
     );
   }
@@ -114,7 +110,6 @@ class Login extends Component {
 Login.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
-  // dispatch: PropTypes.func.isRequired,
 };
 
 export default Login;

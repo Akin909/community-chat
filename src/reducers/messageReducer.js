@@ -1,4 +1,5 @@
 import { ADD_MESSAGE } from './../constants';
+
 const messageReducer = (state = [], action) => {
   switch (action.type) {
     case ADD_MESSAGE:
