@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 // import PropTypes from 'prop-types';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
-import Chat from '../containers/Chat';
+import {
+  BrowserRouter as Router,
+  withRouter,
+  Redirect,
+  Link,
+  Route,
+} from 'react-router-dom';
+
 import Login from './login';
+import Home from './home';
+import { auth } from './authentication';
+import Chat from '../components/Chat';
 import styled from 'styled-components';
 
 const StyledNavLink = styled(Link)`
@@ -32,6 +41,36 @@ const NavListItem = styled.li`
   display: flex;
   flex-direction: row;
 `;
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      (auth.isAuthenticated
+        ? <Component {...props} />
+        : <Redirect
+            to={{
+              pathname: '/login',
+              state: { from: props.location },
+            }}
+          />)}
+  />
+);
+
+const AuthButton = withRouter(
+  ({ history }) =>
+    (auth.isAuthenticated
+      ? <p>
+          Welcome! <button
+            onClick={() => {
+              auth.signout(() => history.push('/'));
+            }}
+          >
+            Sign out
+          </button>
+        </p>
+      : <p>You are not logged in.</p>)
+);
+
 //TODO Make the chat route private and navigate there on login
 const Navbar = () => (
   <Router>
@@ -43,9 +82,10 @@ const Navbar = () => (
           <StyledNavLink to="/chat">Chat</StyledNavLink>
         </NavListItem>
       </NavLinkList>
-
-      <Route path="/chat" component={Chat} />
-      <Route exact path="/" component={Login} />
+      <AuthButton />
+      <Route exact path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <PrivateRoute path="/chat" component={Chat} />
     </div>
   </Router>
 );

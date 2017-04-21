@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Redirect } from 'react-router-dom';
-import { getLoginDetails, updateUserList } from '../actions/index';
 import styled from 'styled-components';
 
 import Input from './../styled-components/input.js';
+import { auth } from './authentication';
 import Form from './../styled-components/form.js';
+import { socket } from '../App';
 
 const Label = styled.label`
   margin-top: 0.4rem;
@@ -22,11 +21,14 @@ class Login extends Component {
     this.handleLogin = this.handleLogin.bind(this);
     this.handleUsernameInput = this.handleUsernameInput.bind(this);
     this.handlePasswordInput = this.handlePasswordInput.bind(this);
+    this.login = this.login.bind(this);
 
     this.state = {
       username: '',
       password: '',
       submitted: false,
+      fromMe: false,
+      redirectToReferrer: false,
     };
   }
 
@@ -43,36 +45,46 @@ class Login extends Component {
 
   handleLogin(event) {
     event.preventDefault();
-    if (this.props.login.submitted) {
-      return;
-    }
-    const userDetails = {
+    this.setState({
       fromMe: true,
       submitted: true,
-      username: this.refs.username.value,
-      password: this.refs.password.value,
-    };
-    this.props.getLoginDetails(userDetails);
-    this.props.updateUserList(userDetails);
+    });
+    this.login(() => socket.emit('user:login', this.state));
+  }
+
+  login(callback) {
+    auth.authenticate(() => {
+      this.setState({
+        redirectToReferrer: true,
+      });
+      console.log('login was called');
+      callback();
+    });
   }
 
   render() {
-    if (this.props.login.submitted) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/chat',
-          }}
-        />
-      );
+    const { from } = this.props.location.state;
+    const { redirectToReferrer } = this.state;
+
+    if (redirectToReferrer) {
+      return <Redirect to={from} />;
     }
+    // if (this.state.submitted) {
+    //   return (
+    //     <Redirect
+    //       to={{
+    //         pathname: '/chat',
+    //       }}
+    //     />
+    //   );
+    // }
     return (
       <Form onSubmit={this.handleLogin}>
         <Label htmlFor="username">Username: </Label>
         <Input
           type="text"
           name="username"
-          ref="username"
+          id="username"
           placeholder="Please enter a user name"
           onChange={this.handleUsernameInput}
           value={this.state.username}
@@ -82,13 +94,18 @@ class Login extends Component {
         <Input
           type="text"
           name="password"
-          ref="password"
+          id="password"
           placeholder="Please enter a password"
           onChange={this.handlePasswordInput}
           value={this.state.password}
           required
         />
-        <Input button type="submit" value="submit" />
+        <div>
+          <p>
+            You must login to join the chat
+            <Input button type="submit" value="Log in" />
+          </p>
+        </div>
       </Form>
     );
   }
@@ -100,14 +117,4 @@ Login.propTypes = {
   // dispatch: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch => {
-  return bindActionCreators({ getLoginDetails, updateUserList }, dispatch);
-};
-
-const mapStateToProps = state => {
-  return {
-    login: state.login,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

@@ -35,14 +35,18 @@ class ChatOutput extends Component {
     messagesList.scrollTop = messagesList.scrollHeight;
   }
   render() {
-    const { messageDetails, user } = this.props;
-    const messages = messageDetails.map(message => {
+    // console.log('messages in output', this.props.messages);
+    if (this.props.messages.length === 0) {
       return (
-        <MessagesList key={V4()}>
-          <Username mine={user.fromMe}>
+        <MessagesList id="messagesList"><div>No Messages</div></MessagesList>
+      );
+    }
+    const messages = this.props.messages.map(message => {
+      return (
+        <MessagesList id="messagesList" key={V4()}>
+          <Username>
             {message.username ? message.username + ':' : 'User:'}
           </Username>
-          {' '}
           <Message>{message.body}</Message>
         </MessagesList>
       );
